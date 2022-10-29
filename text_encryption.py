@@ -6,51 +6,58 @@ try:
     from cryptography.fernet import Fernet, InvalidToken
     from cryptography.hazmat.primitives import hashes
     from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-except ModuleNotFoundError as error:
-    print(error)
+except ModuleNotFoundError:
     print('Enter the command: pip install cryptography')
     sys.exit()
 
 
 class TextEncryption():
-    def __init__(self, password):
+    def __init__(self, password, code):
         self.password = password
+        self.code = code
 
     def encrypt(self, plaintext):
-        fernet_key = self.get_fernet_key(self.password)
+        fernet_key = self.get_fernet_key(self.password, self.code)
         ciphertext = fernet_key.encrypt(plaintext.encode()).decode()
+        try:
+            ciphertext = ciphertext.split('gAAAAABj')[1]
+        except IndexError:
+            print('Error')
         return ciphertext
 
     def decrypt(self, ciphertext):
         try:
-            fernet_key = self.get_fernet_key(self.password)
+            ciphertext = f'gAAAAABj{ciphertext}'
+            fernet_key = self.get_fernet_key(self.password, self.code)
             plaintext = fernet_key.decrypt(ciphertext.encode()).decode()
             return plaintext
         except InvalidToken:
-            print('Error: invalid text or password')
+            print('Error: incorrect text, password or code')
 
-    def get_fernet_key(self, password):
-        salt = self.get_hash(password)
+    def get_fernet_key(self, password, code):
+        salt = self.get_hash(password, code)
+        iterations = int(code) * 1000
         kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
             length=32,
             salt=salt,
-            iterations=500_000,
+            iterations=iterations,
         )
         key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
         f = Fernet(key)
         return f
 
     @staticmethod
-    def get_hash(password):
-        h = hashlib.new('sha512')
+    def get_hash(password, code):
+        h = hashlib.sha512()
         h.update(password.encode())
+        h.update(code.encode())
         return h.digest()
 
 
 def main():
-    source = input('Do you want to open a text file [Y/n]? ')
-    if source == 'n' or source == 'N':
+    from_file = input('Do you want to open a text file [Y/n]? ')
+    if from_file == 'n' or from_file == 'N':
         text = input('Enter text: ')
     else:
         try:
@@ -63,32 +70,37 @@ def main():
     if len(text) > 0:
         password = getpass.getpass(prompt='Enter password: ', stream=None)
         if len(password) > 0:
-            mode = input('Do you want to encrypt or decrypt the text [E/d]? ')
-            if mode == 'd' or mode == 'D':
-                plaintext = TextEncryption(password).decrypt(text)
-                if plaintext is not None:
-                    if source == 'n' or source == 'N':
-                        print(f'Plaintext: {plaintext}')
-                    else:
-                        file = open('plaintext.txt', 'w')
-                        file.write(plaintext)
-                        file.close()
-                        print(f'Plaintext saved as plaintext.txt')
-            else:
-                ciphertext = TextEncryption(password).encrypt(text)
-                if source == 'n' or source == 'N':
-                    print(f'Ciphertext: {ciphertext}')
+            code = getpass.getpass(prompt='Enter 4 digit code: ', stream=None)
+            if code.isdigit() is True and len(code) == 4:
+                mode = input('Do you want to encrypt or decrypt the text [E/d]? ')
+                if mode == 'd' or mode == 'D':
+                    plaintext = TextEncryption(password, code).decrypt(text)
+                    if plaintext is not None:
+                        if from_file == 'n' or from_file == 'N':
+                            print(f'Plaintext: {plaintext}')
+                        else:
+                            file = open('plaintext.txt', 'w')
+                            file.write(plaintext)
+                            file.close()
+                            print(f'Plaintext saved as plaintext.txt')
                 else:
-                    file = open('ciphertext.txt', 'w')
-                    file.write(ciphertext)
-                    file.close()
-                    print(f'Ciphertext saved as ciphertext.txt')
+                    ciphertext = TextEncryption(password, code).encrypt(text)
+                    if from_file == 'n' or from_file == 'N':
+                        print(f'Ciphertext: {ciphertext}')
+                    else:
+                        file = open('ciphertext.txt', 'w')
+                        file.write(ciphertext)
+                        file.close()
+                        print(f'Ciphertext saved as ciphertext.txt')
+            else:
+                print('Error: incorrect code')
+                return
         else:
             print('Error: empty password')
             return
     else:
         print('Error: empty text')
-        return        
+        return
 
 
 if __name__ == '__main__':

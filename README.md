@@ -4,13 +4,15 @@ Text encryption with password using function PBKDF2HMAC
 
 ### Example
 
-Text: This is my secret text.
+Text: My secret text.
 
 Password: h*Mk{HRG)[J}~Cj\uwnJ|Wo#,Bc5G|
 
-Ciphertext: gAAAAABjR4Uy7vpuLsOoA9oLTOcsLy5EF5dCrPWBpHwoc2iYNEGodNSSh_NCpGXdUnrJqH3clhfg-nH5U1TzMr1ow0gO3nYBgap2d5KDfldkbFErI53_co8=
+Code: 3168
 
-Plaintext: This is my secret text.
+Ciphertext: XW61tqY_Rn07Y2B_1wwg7wRs2SZtKNLJ2fJIJL59cMz_ote1UGfwSn4gvmPqBQbGwbvJHPggfktLDY5j6P9bGet7pQ==
+
+Plaintext: My secret text.
 
 ### Usage
 
