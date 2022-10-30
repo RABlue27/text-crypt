@@ -1,6 +1,6 @@
 # Text Encryption
 
-Text encryption with password using function PBKDF2HMAC
+Text encryption with PBKDF2HMAC
 
 ### Example
 
