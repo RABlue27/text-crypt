@@ -1,22 +1,22 @@
-# Text Encryption
+# TextCrypt
 
-Text encryption with a password and code using PBKDF2HMAC.
+Text encryption with a password and code using PBKDF2HMAC
 
 ### Example
 
 Text: My secret text.
 
-Password: h*Mk{HRG)[J}~Cj\uwnJ|Wo#,Bc5G|
+Password: hFTE0I7MucAK40U0aFkU
 
 Code: 3168
 
-Ciphertext: XW61tqY_Rn07Y2B_1wwg7wRs2SZtKNLJ2fJIJL59cMz_ote1UGfwSn4gvmPqBQbGwbvJHPggfktLDY5j6P9bGet7pQ==
+Ciphertext: gQCMQgCgfN4MpQsyLzPRHD4czV7eO_yF_sNN8jDMTij0p839fGwShAKnye8iQr_bRE6pVCV8l3RscH_Jx3sEvFY5JQ==
 
 Plaintext: My secret text.
 
 ### Usage
 
-Download release for [Windows](https://github.com/ilyakotsar/text-encryption/releases/download/v1.0.0/text_encryption.exe)
+Download release for [Windows](https://github.com/ilyakotsar/TextCrypt/releases/download/v1.0.0/TextCrypt.exe)
 
 Or use source code:
 
@@ -27,5 +27,5 @@ pip install cryptography
 
 Run the script
 ```
-python text_encryption.py
+python textcrypt.py
 ```

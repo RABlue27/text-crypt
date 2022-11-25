@@ -1,4 +1,5 @@
 import base64
+import os
 import getpass
 import hashlib
 import sys
@@ -11,7 +12,7 @@ except ModuleNotFoundError:
     sys.exit()
 
 
-class TextEncryption():
+class TextCrypt():
     def __init__(self, password, code):
         self.password = password
         self.code = code
@@ -69,34 +70,42 @@ def main():
             return
     if len(text) > 0:
         password = getpass.getpass(prompt='Enter password: ', stream=None)
-        if len(password) > 0:
+        if len(password) >= 8:
             code = getpass.getpass(prompt='Enter 4 digit code: ', stream=None)
             if code.isdigit() is True and len(code) == 4:
                 mode = input('Do you want to encrypt or decrypt the text [E/d]? ')
                 if mode == 'd' or mode == 'D':
-                    plaintext = TextEncryption(password, code).decrypt(text)
-                    if plaintext is not None:
-                        if from_file == 'n' or from_file == 'N':
-                            print(f'Plaintext: {plaintext}')
-                        else:
-                            file = open('plaintext.txt', 'w')
-                            file.write(plaintext)
-                            file.close()
-                            print(f'Plaintext saved as plaintext.txt')
-                else:
-                    ciphertext = TextEncryption(password, code).encrypt(text)
-                    if from_file == 'n' or from_file == 'N':
-                        print(f'Ciphertext: {ciphertext}')
+                    if os.path.exists('plaintext.txt'):
+                        print(f'Error: file plaintext.txt already exists')
+                        return
                     else:
-                        file = open('ciphertext.txt', 'w')
-                        file.write(ciphertext)
-                        file.close()
-                        print(f'Ciphertext saved as ciphertext.txt')
+                        plaintext = TextCrypt(password, code).decrypt(text)
+                        if plaintext is not None:
+                            if from_file == 'n' or from_file == 'N':
+                                print(f'Plaintext: {plaintext}')
+                            else:
+                                file = open('plaintext.txt', 'w')
+                                file.write(plaintext)
+                                file.close()
+                                print(f'Plaintext saved as plaintext.txt')
+                else:
+                    if os.path.exists('ciphertext.txt'):
+                        print(f'Error: file ciphertext.txt already exists')
+                        return
+                    else:
+                        ciphertext = TextCrypt(password, code).encrypt(text)
+                        if from_file == 'n' or from_file == 'N':
+                            print(f'Ciphertext: {ciphertext}')
+                        else:
+                            file = open('ciphertext.txt', 'w')
+                            file.write(ciphertext)
+                            file.close()
+                            print(f'Ciphertext saved as ciphertext.txt')
             else:
                 print('Error: incorrect code')
                 return
         else:
-            print('Error: empty password')
+            print('Error: minimum password length: 8')
             return
     else:
         print('Error: empty text')
